@@ -55,16 +55,17 @@ class DatabaseConnectionTest {
 
     @Test
     void createPost() {
+        // Create a post
         Post post = new Post("My first post", "This is my first post", 1L);
 
-        // Create the post
-        databaseConnection.createPost(post);
 
         // Check if the post was created
-        assertNotNull(post.getId());
+        assertNotNull(databaseConnection.createPost(post));
 
+        Post postToDelete = new Post();
+        postToDelete.setId(post.getId());
         // Clean up: Delete the post you created during the test
-        databaseConnection.deletePost(post);
+        databaseConnection.deletePost(postToDelete);
     }
 
     @Test

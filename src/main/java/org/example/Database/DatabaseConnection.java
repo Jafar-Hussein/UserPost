@@ -141,24 +141,34 @@ public class DatabaseConnection {
 
 
     //create a post
-    public boolean createPost(Post post){
-        if (post.getTitle().isEmpty() || post.getContent().isEmpty()) {
-            System.out.println("Title and content cannot be empty.");
-            return false;
-        }
+    // Modify the createPost method to return the ID of the created post
+    public Long createPost(Post post) {
         String sql = "INSERT INTO posts (title, content, user_id) VALUES (?, ?, ?)";
         try (Connection conn = this.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, post.getTitle());
             preparedStatement.setString(2, post.getContent());
-            preparedStatement.setLong(3, post.getUserId()); // Set the user ID
-            preparedStatement.executeUpdate();
-            System.out.println("Post created successfully.");
+            preparedStatement.setLong(3, post.getUserId());
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating post failed, no rows affected.");
+            }
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    Long postId = generatedKeys.getLong(1);
+                    post.setId(postId); // Set the ID of the post
+                    System.out.println("Post created successfully.");
+                    return postId;
+                } else {
+                    throw new SQLException("Creating post failed, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            return null;
         }
-        return true;
     }
+
 
 
     //get logged in user's posts
