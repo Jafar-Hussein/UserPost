@@ -59,7 +59,7 @@ public boolean loggInMeny(){
     }
 
     private void updatePost() {
-    So
+
     }
 
     private void deletePost() {
