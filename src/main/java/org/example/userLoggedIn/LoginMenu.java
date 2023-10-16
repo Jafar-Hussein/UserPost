@@ -4,6 +4,7 @@ import org.example.Database.DatabaseFacade;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class LoginMenu {
@@ -11,20 +12,24 @@ private final DatabaseFacade databaseFacade;
 private final Scanner scanner;
 private final User user;
 private final Post post;
-public LoginMenu() {
+public LoginMenu(User loggedInUser) {
     databaseFacade = new DatabaseFacade();
     scanner = new Scanner(System.in);
-    user = new User();
+    user = loggedInUser;
     post = new Post();
 }
-public boolean loggInMeny(){
-    boolean isRunning = true;
-    while (isRunning) {
-        menyOptions();
-        int choice = scanner.nextInt();
-        userChoice(choice);
+public boolean logInMeny(){
+    do {
+        try {
+            menyOptions();
+            int choice = scanner.nextInt();
+            userChoice(choice);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            scanner.nextLine();
+        }
     }
-    return true;
+    while (true);
 }
 
     private void userChoice(int choice) {
@@ -56,10 +61,35 @@ public boolean loggInMeny(){
     }
 
     private void printPosts() {
+        // print all of the user posts
+        post.setUserId(user.getId());
+        List<Post> userPosts = databaseFacade.getUserPost(post);
+
+        if (userPosts != null && !userPosts.isEmpty()) {
+            System.out.println("User's posts:");
+            for (Post post : userPosts) {
+                System.out.printf("Title: %s\n", post.getTitle());
+                System.out.printf("Content: %s\n", post.getContent());
+                System.out.println("-------------");
+            }
+        } else {
+            System.out.println("No posts found for the user.");
+        }
     }
 
-    private void updatePost() {
 
+    private void updatePost() {
+        System.out.println("Enter id of post to update");
+        Long postId = scanner.nextLong();
+        System.out.println("Enter new title: ");
+        String postTitle = scanner.nextLine();
+        System.out.println("Enter new content: ");
+        String postContent = scanner.nextLine();
+        Post post = new Post();
+        post.setId(postId);
+        post.setTitle(postTitle);
+        post.setContent(postContent);
+        databaseFacade.updatePost(post);
     }
 
     private void deletePost() {
@@ -71,6 +101,12 @@ public boolean loggInMeny(){
     }
 
     private void createPost() {
+        // Check if the user's ID is null
+        if (user.getId() == null) {
+            System.out.println("User ID is not set. Please log in.");
+            return;
+        }
+
         System.out.println("Enter title: ");
         String title = scanner.nextLine();
         System.out.println("Enter content: ");
@@ -80,8 +116,8 @@ public boolean loggInMeny(){
         post.setContent(content);
         post.setUserId(user.getId());
         databaseFacade.createPost(post);
-
     }
+
 
 
     private void menyOptions() {

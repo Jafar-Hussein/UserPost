@@ -1,5 +1,6 @@
 package org.example.Database;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
 
@@ -11,7 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class DatabaseConnection {
     private String url = "jdbc:mysql://localhost:3306/userposts";
     private String username = "root";
-    private String password = "Jafar_Hussein332";
+    private String password;
     private Connection conn = null;
     //connect to database
     public DatabaseConnection() {
@@ -19,6 +20,8 @@ public class DatabaseConnection {
     }
     public Connection getConnection() {
         try {
+            Dotenv dotenv = Dotenv.load();
+            password = dotenv.get("DB_PASSWORD");
             conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected to database!");
             createTables();
@@ -95,7 +98,8 @@ public class DatabaseConnection {
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getLong(1); // Return the generated user ID
+                    user.setId(generatedKeys.getLong(1)); // Set the ID in the User object
+                    return user.getId(); // Return the generated user ID
                 } else {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }
@@ -105,6 +109,7 @@ public class DatabaseConnection {
             return null;
         }
     }
+
 
     public User login(User user) {
         if (user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
@@ -189,11 +194,12 @@ public class DatabaseConnection {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 // Create a new Post object for each result
-                userPost.setId(resultSet.getLong("id"));
-                userPost.setTitle(resultSet.getString("title"));
-                userPost.setContent(resultSet.getString("content"));
-                userPost.setUserId(resultSet.getLong("user_id"));
-                posts.add(userPost);
+                Post post = new Post(); // Create a new Post object
+                post.setId(resultSet.getLong("id"));
+                post.setTitle(resultSet.getString("title"));
+                post.setContent(resultSet.getString("content"));
+                post.setUserId(resultSet.getLong("user_id"));
+                posts.add(post);
                 System.out.println("Post retrieved successfully.");
             }
         } catch (SQLException e) {
@@ -201,6 +207,7 @@ public class DatabaseConnection {
         }
         return posts;
     }
+
 
 
 
