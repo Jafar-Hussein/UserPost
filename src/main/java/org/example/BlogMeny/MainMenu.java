@@ -1,36 +1,38 @@
 package org.example.BlogMeny;
 
-import org.example.Database.DatabaseFacade;
+import org.example.DatabaseFacade;
 import org.example.accountContent.User;
+import org.example.input.InputHandler;
 import org.example.userLoggedIn.LoginMenu;
-
-import java.util.Scanner;
 
 public class MainMenu {
     private final DatabaseFacade dbConnection;
-    private final Scanner scanner;
-    private User loggedInUser; // Add a field to store the logged-in user
+    private final InputHandler inputHandler;
+    private User loggedInUser;
 
-    public MainMenu() {
-        dbConnection = new DatabaseFacade();
-        scanner = new Scanner(System.in);
-        loggedInUser = null; // Initialize logged-in user to null
+    public MainMenu(DatabaseFacade dbConnection, InputHandler inputHandler) {
+        this.dbConnection = dbConnection;
+        this.inputHandler = inputHandler;
+        loggedInUser = null;
     }
-
-    public boolean meny() {
+public void startMainMenu(){
+    meny();
+    inputHandler.closeScanner();
+}
+    private boolean meny() {
         while (true) {
             System.out.println("1. Create user");
             System.out.println("2. Login");
             System.out.println("3. Exit");
-            int choice = scanner.nextInt();
+            int choice = inputHandler.getIntInput();
 
             switch (choice) {
                 case 1:
-                    scanner.nextLine(); // Consume the newline character
+                    inputHandler.getStringInput(); // Consume the newline character
                     Long createdUser = createUser();
                     break;
                 case 2:
-                    scanner.nextLine(); // Consume the newline character
+                    inputHandler.getStringInput(); // Consume the newline character
                     loggedInUser = login(); // Store the logged-in user
 
                     if (loggedInUser == null) {
@@ -39,7 +41,7 @@ public class MainMenu {
                     } else {
                         // Login was successful, proceed to the login menu.
                         LoginMenu loginMenu = new LoginMenu(loggedInUser); // Pass the logged-in user
-                        loginMenu.logInMeny();
+                        loginMenu.startLoginMenu();
                     }
                     break;
 
@@ -54,9 +56,9 @@ public class MainMenu {
 
     public Long createUser() {
         System.out.println("Enter username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
         System.out.println("Enter password: ");
-        String password = scanner.nextLine();
+        String password = inputHandler.getStringInput();
         User user = new User(username, password);
 
         return dbConnection.createUser(user);
@@ -64,11 +66,11 @@ public class MainMenu {
 
     public User login() {
         System.out.println("Enter username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
         System.out.println("Enter password: ");
-        String password = scanner.nextLine();
+        String password = inputHandler.getStringInput();
         User loginUser = new User(username, password);
-        User loggedInUser = dbConnection.login(loginUser);
+        loggedInUser = dbConnection.login(loginUser); // Update the instance variable
 
         if (loggedInUser == null) {
             return null; // Return null to indicate unsuccessful login
@@ -78,8 +80,14 @@ public class MainMenu {
     }
 
 
+
     // Add a getter to access the logged-in user from outside the class
     public User getLoggedInUser() {
+        if (loggedInUser == null) {
+            System.out.println("No user is logged in");
+        } else {
+            System.out.println("Logged in as: " + loggedInUser.getUsername());
+        }
         return loggedInUser;
     }
 }

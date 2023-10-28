@@ -1,32 +1,36 @@
 package org.example.userLoggedIn;
 
-import org.example.Database.DatabaseFacade;
+import org.example.DatabaseFacade;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
+import org.example.input.InputHandler;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class LoginMenu {
 private final DatabaseFacade databaseFacade;
-private final Scanner scanner;
+private final InputHandler inputHandler;
 private final User user;
 private final Post post;
 public LoginMenu(User loggedInUser) {
     databaseFacade = new DatabaseFacade();
-    scanner = new Scanner(System.in);
+    inputHandler = new InputHandler();
     user = loggedInUser;
     post = new Post();
 }
-public boolean logInMeny(){
+public void startLoginMenu(){
+    logInMeny();
+    inputHandler.closeScanner();
+}
+private boolean logInMeny(){
     do {
         try {
             menyOptions();
-            int choice = scanner.nextInt();
+            int choice = inputHandler.getIntInput();
             userChoice(choice);
         }catch (Exception e){
             System.out.println(e.getMessage());
-            scanner.nextLine();
+            inputHandler.getStringInput();
         }
     }
     while (true);
@@ -35,19 +39,19 @@ public boolean logInMeny(){
     private void userChoice(int choice) {
     switch (choice){
         case 1:
-            scanner.nextLine();
+            inputHandler.getStringInput();
             createPost();
             break;
         case 2:
-            scanner.nextLine();
+            inputHandler.getStringInput();
             deletePost();
             break;
         case 3:
-            scanner.nextLine();
+            inputHandler.getStringInput();
             updatePost();
             break;
             case 4:
-                scanner.nextLine();
+                inputHandler.getStringInput();
                 printPosts();
                 break;
         case 5:
@@ -80,11 +84,11 @@ public boolean logInMeny(){
 
     private void updatePost() {
         System.out.println("Enter id of post to update");
-        Long postId = scanner.nextLong();
+        Long postId = inputHandler.getLongInput();
         System.out.println("Enter new title: ");
-        String postTitle = scanner.nextLine();
+        String postTitle = inputHandler.getStringInput();
         System.out.println("Enter new content: ");
-        String postContent = scanner.nextLine();
+        String postContent = inputHandler.getStringInput();
         Post post = new Post();
         post.setId(postId);
         post.setTitle(postTitle);
@@ -94,7 +98,7 @@ public boolean logInMeny(){
 
     private void deletePost() {
         System.out.println("Enter id of post to delete: ");
-        Long id = scanner.nextLong();
+        Long id = inputHandler.getLongInput();
         Post post = new Post();
         post.setId(id);
         databaseFacade.deletePost(post);
@@ -108,9 +112,9 @@ public boolean logInMeny(){
         }
 
         System.out.println("Enter title: ");
-        String title = scanner.nextLine();
+        String title = inputHandler.getStringInput();
         System.out.println("Enter content: ");
-        String content = scanner.nextLine();
+        String content = inputHandler.getStringInput();
 
         post.setTitle(title);
         post.setContent(content);

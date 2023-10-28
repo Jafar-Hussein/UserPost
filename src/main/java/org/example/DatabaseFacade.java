@@ -1,4 +1,4 @@
-package org.example.Database;
+package org.example;
 
 import org.example.accountContent.Post;
 import org.example.accountContent.User;

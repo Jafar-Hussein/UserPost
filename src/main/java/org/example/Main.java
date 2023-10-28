@@ -2,12 +2,15 @@ package org.example;
 
 
 import org.example.BlogMeny.MainMenu;
+import org.example.input.InputHandler;
 
 public class Main {
 
     public static void main(String[] args) {
-       MainMenu mainMenu = new MainMenu();
-       mainMenu.meny();
+        DatabaseFacade dbConnection = new DatabaseFacade();
+        InputHandler inputHandler = new InputHandler();
+       MainMenu mainMenu = new MainMenu(dbConnection, inputHandler);
+       mainMenu.startMainMenu();
 
 
     }

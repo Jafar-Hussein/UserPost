@@ -1,4 +1,4 @@
-package org.example.Database;
+package org.example;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.example.accountContent.Post;
@@ -23,7 +23,6 @@ public class DatabaseConnection {
             Dotenv dotenv = Dotenv.load();
             password = dotenv.get("DB_PASSWORD");
             conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Connected to database!");
             createTables();
         } catch (SQLException e) {
             // Properly handle the exception (e.g., log it, throw a custom exception)
