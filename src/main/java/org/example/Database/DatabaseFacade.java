@@ -1,5 +1,6 @@
-package org.example;
+package org.example.Database;
 
+import org.example.Database.DatabaseConnection;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
 

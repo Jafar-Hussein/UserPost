@@ -1,6 +1,6 @@
 package org.example.BlogMeny;
 
-import org.example.DatabaseFacade;
+import org.example.Database.DatabaseFacade;
 import org.example.accountContent.User;
 import org.example.input.InputHandler;
 import org.example.userLoggedIn.LoginMenu;

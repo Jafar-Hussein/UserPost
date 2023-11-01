@@ -2,6 +2,7 @@ package org.example;
 
 
 import org.example.BlogMeny.MainMenu;
+import org.example.Database.DatabaseFacade;
 import org.example.input.InputHandler;
 
 public class Main {

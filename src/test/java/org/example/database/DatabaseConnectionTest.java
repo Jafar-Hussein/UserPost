@@ -1,6 +1,6 @@
 package org.example.database;
 
-import org.example.DatabaseConnection;
+import org.example.Database.DatabaseConnection;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
 import org.junit.jupiter.api.BeforeEach;

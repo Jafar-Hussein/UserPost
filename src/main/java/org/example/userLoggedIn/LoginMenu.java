@@ -1,6 +1,6 @@
 package org.example.userLoggedIn;
 
-import org.example.DatabaseFacade;
+import org.example.Database.DatabaseFacade;
 import org.example.accountContent.Post;
 import org.example.accountContent.User;
 import org.example.input.InputHandler;
@@ -8,10 +8,10 @@ import org.example.input.InputHandler;
 import java.util.List;
 
 public class LoginMenu {
-private final DatabaseFacade databaseFacade;
-private final InputHandler inputHandler;
-private final User user;
-private final Post post;
+protected DatabaseFacade databaseFacade;
+protected InputHandler inputHandler;
+protected User user;
+protected Post post;
 public LoginMenu(User loggedInUser) {
     databaseFacade = new DatabaseFacade();
     inputHandler = new InputHandler();
@@ -64,7 +64,7 @@ private boolean logInMeny(){
 
     }
 
-    private void printPosts() {
+    public void printPosts() {
         // print all of the user posts
         post.setUserId(user.getId());
         List<Post> userPosts = databaseFacade.getUserPost(post);
@@ -82,9 +82,10 @@ private boolean logInMeny(){
     }
 
 
-    private void updatePost() {
+    public void updatePost() {
         System.out.println("Enter id of post to update");
         Long postId = inputHandler.getLongInput();
+        inputHandler.getStringInput(); // Consume the newline character
         System.out.println("Enter new title: ");
         String postTitle = inputHandler.getStringInput();
         System.out.println("Enter new content: ");
@@ -96,7 +97,7 @@ private boolean logInMeny(){
         databaseFacade.updatePost(post);
     }
 
-    private void deletePost() {
+   public void deletePost() {
         System.out.println("Enter id of post to delete: ");
         Long id = inputHandler.getLongInput();
         Post post = new Post();
@@ -104,11 +105,11 @@ private boolean logInMeny(){
         databaseFacade.deletePost(post);
     }
 
-    private void createPost() {
+    public boolean createPost() {
         // Check if the user's ID is null
         if (user.getId() == null) {
             System.out.println("User ID is not set. Please log in.");
-            return;
+            return false;
         }
 
         System.out.println("Enter title: ");
@@ -116,10 +117,16 @@ private boolean logInMeny(){
         System.out.println("Enter content: ");
         String content = inputHandler.getStringInput();
 
+        if (title.isEmpty() || content.isEmpty()) {
+            System.out.println("Title and content cannot be empty.");
+            return false;
+        }
+
         post.setTitle(title);
         post.setContent(content);
         post.setUserId(user.getId());
         databaseFacade.createPost(post);
+         return true;
     }
 
 

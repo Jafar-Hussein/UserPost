@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Database;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.example.accountContent.Post;
@@ -227,7 +227,6 @@ public class DatabaseConnection {
 
             // Execute the query
             preparedStatement.executeUpdate();
-            System.out.println("Post updated successfully.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
